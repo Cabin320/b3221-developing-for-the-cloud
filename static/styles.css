@@ -23,15 +23,6 @@ body, html {
   width: 250px;
 }
 
-footer {
-  background-color: #555;
-  color: white;
-  padding: 15px;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-}
-
 @media screen and (max-width: 767px) {
   .sidenav {
     height: auto;
