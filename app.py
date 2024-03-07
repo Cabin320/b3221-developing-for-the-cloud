@@ -18,4 +18,4 @@ async def read_root(request: Request):
 
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", reload=True)
+    uvicorn.run("app:app", port=8000, reload=True)
