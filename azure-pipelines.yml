@@ -12,6 +12,8 @@ steps:
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '$(python.version)'
+    addToPath: true
+    architecture: 'x64'
   displayName: 'Use Python $(python.version)'
 
 - script: |
@@ -19,11 +21,14 @@ steps:
     pip install -r requirements.txt
   displayName: 'Install dependencies'
 
-- task: CopyFiles@2
+- task: ArchiveFiles@2
   inputs:
-    targetFolder: '$(Build.ArtifactStagingDirectory)' 
+    rootFolderOrFile: $(System.DefaultWorkingDirectory)
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
  
-- task: PublishBuildArtifacts@1    
-  displayName: 'Publish Artifact: drop'
-  inputs:
-    PathtoPublish: '$(build.artifactstagingdirectory)'
+- publish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+  displayName: 'Upload package'
+  artifact: drop
