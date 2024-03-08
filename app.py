@@ -5,7 +5,11 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.requests import Request
 
-app = FastAPI()
+app = FastAPI(
+    title="Waqq.ly Website",
+    docs_url=None,
+    redoc_url=None
+)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
