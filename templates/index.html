@@ -4,15 +4,15 @@
 
 {% block content %}
 <h2>Waqq.ly Dog Walking Registration</h2>
-<form id="dog-form" style="margin-left: 20px; margin-right: 20px;">
+<form id="dog-form" action="/submit" method="post" style="margin-left: 20px; margin-right: 20px;">
     <div class="form-group">
         <label for="dog-walker">Register Dog Walker</label>
-        <input type="text" class="form-control" id="dog-walker" placeholder="Register your name!">
+        <input type="text" class="form-control" id="dog-walker" name="dog_walker" placeholder="Register your name!">
     </div>
     <div id="dog-inputs">
         <div class="form-group">
             <label for="dog-input">Register Pet</label>
-            <input type="text" class="form-control" id="dog-input" placeholder="Register your pet's name!">
+            <input type="text" class="form-control" id="dog-input" name="dog" placeholder="Register your pet's name!">
         </div>
     </div>
     <button type="button" class="btn btn-primary" id="add-dog">Add Additional Pet</button>
@@ -26,7 +26,7 @@ document.getElementById("add-dog").addEventListener("click", function() {
   newInput.innerHTML = `
     <div class="form-group">
       <label for="dog">Register Pet</label>
-      <input type="text" class="form-control dog-input" placeholder="Enter Dog Name">
+      <input type="text" class="form-control dog-input" name="add_dog" placeholder="Register an Additional Pet">
       <button type="button" class="btn btn-danger delete-dog" style="margin-top: 5px;">Delete</button>
     </div>
   `;
