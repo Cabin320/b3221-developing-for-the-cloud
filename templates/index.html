@@ -3,6 +3,20 @@
 {% block title %}Waqq.ly Website{% endblock %}
 
 {% block content %}
+{% if submitted %}
+<div class="alert alert-success" role="alert">
+    <button type="button" class="close" data-dismiss="alert">x</button>
+    Content submitted successfully!
+</div>
+{% endif %}
+
+{% if missing %}
+<div class="alert alert-danger" role="alert">
+    <button type="button" class="close" data-dismiss="alert">x</button>
+     Please ensure you have inputted all required data into the fields belows!
+</div>
+{% endif %}
+
 <h2>Waqq.ly Dog Walking Registration</h2>
 <form id="dog-form" action="/submit" method="post" style="margin-left: 20px; margin-right: 20px;">
     <div class="form-group">
@@ -16,6 +30,7 @@
         </div>
     </div>
     <button type="button" class="btn btn-primary" id="add-dog">Add Additional Pet</button>
+    <button type="button" id="clear-all" class="btn btn-danger">Clear All</button>
     <button type="submit" class="btn btn-success">Submit</button>
 </form>
 
@@ -24,10 +39,9 @@ document.getElementById("add-dog").addEventListener("click", function() {
   var dogInputs = document.getElementById("dog-inputs");
   var newInput = document.createElement("div");
   newInput.innerHTML = `
-    <div class="form-group">
-      <label for="dog">Register Pet</label>
-      <input type="text" class="form-control dog-input" name="add_dog" placeholder="Register an Additional Pet">
-      <button type="button" class="btn btn-danger delete-dog" style="margin-top: 5px;">Delete</button>
+    <div class="form-group" style="display: flex; align-items: center;">
+      <input type="text" class="form-control dog-input" name="add_dog" placeholder="Register an Additional Pet" style="flex: 1; margin-right: 5px;">
+      <button type="button" class="btn btn-danger delete-dog">Delete</button>
     </div>
   `;
   dogInputs.appendChild(newInput);
@@ -36,6 +50,13 @@ document.getElementById("add-dog").addEventListener("click", function() {
 document.getElementById("dog-form").addEventListener("click", function(event) {
   if (event.target.classList.contains("delete-dog")) {
     event.target.parentElement.remove();
+  }
+});
+
+document.getElementById("clear-all").addEventListener("click", function() {
+  var dogInputs = document.getElementById("dog-inputs");
+  while (dogInputs.children.length > 1) {
+    dogInputs.removeChild(dogInputs.lastChild);
   }
 });
 </script>
