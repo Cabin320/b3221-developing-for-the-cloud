@@ -1,3 +1,4 @@
+import uvicorn
 from typing import List, Optional
 
 from fastapi import FastAPI, Request
@@ -45,6 +46,4 @@ async def submit_registry_info(request: Request):
 
 
 if __name__ == "__main__":
-    import uvicorn
-
     uvicorn.run("app:app", port=8000, reload=True)
