@@ -1,6 +1,6 @@
 body, html {
-    max-height: 100% !important;
-    max-width: 100% !important;
+  max-height: 100% !important;
+  max-width: 100% !important;
 }
 
 .navbar {
@@ -24,12 +24,13 @@ body, html {
 }
 
 @media screen and (max-width: 767px) {
-  .sidenav {
-    height: auto;
-    padding: 15px;
-    width: 100%;
-  }
-  .row.content {
-    height: auto;
+.sidenav {
+  height: auto;
+  padding: 15px;
+  width: 100%;
+}
+.row.content {
+  height: auto;
   }
 }
+

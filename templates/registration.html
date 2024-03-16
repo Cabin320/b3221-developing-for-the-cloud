@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Waqq.ly Website{% endblock %}
+
+{% block content %}
+{% if submitted %}
+<div class="alert alert-success" role="alert">
+    <button type="button" class="close" data-dismiss="alert">x</button>
+    Content submitted successfully!
+</div>
+{% endif %}
+<form id="dog-form" action="/submit" method="post">
+    <img class="mb-4" src="static/images/pawprint.png" alt="" width="72" height="72">
+    <h1 class="h3 mb-3 font-weight-normal">Please Register</h1>
+    <label for="inputEmail" class="sr-only">Email address</label>
+    <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+    <br>
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+    <br>
+    <div style="display: flex; justify-content: space-between;">
+        <div style="flex-grow: 1;">
+            <input type="checkbox" checked="checked" id="dogWalkerCheckbox">
+            <label for="dogWalkerCheckbox">Dog Walker</label>
+        </div>
+        <div style="flex-grow: 1;">
+            <input type="checkbox" id="dogOwnerCheckbox"> <label for="dogOwnerCheckbox">Dog Owner</label>
+        </div>
+    </div>
+    <div id="dog-inputs" style="display: none;">
+        <div class="form-group" style="display: flex; align-items: center;">
+            <input type="text" class="form-control dog-input" name="dog" placeholder="Pet name"
+                   style="flex: 1; margin-right: 5px;">
+            <input type="text" class="form-control dog-input" name="breed" placeholder="Breed"
+                   style="flex: 1; margin-right: 5px;">
+            <input type="number" class="form-control dog-input" name="age" placeholder="Age"
+                   style="flex: 1; margin-right: 70px;" min="0">
+        </div>
+    </div>
+    <div id="additional-pet-buttons" style="display: none; justify-content: space-between;">
+        <button type="button" class="btn btn-primary" id="add-dog">Add Additional Pet</button>
+        <button type="button" id="clear-all" class="btn btn-danger">Clear All</button>
+    </div>
+    <br>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+    <p class="mt-5 mb-3 text-muted" style="margin-top: 10px;">&copy; Waqq.ly 2024</p>
+</form>
+
+<script>
+    var dogOwnerCheckbox = document.getElementById("dogOwnerCheckbox");
+    var dogWalkerCheckbox = document.getElementById("dogWalkerCheckbox");
+    var dogInputs = document.getElementById("dog-inputs");
+    var additionalPetButtons = document.getElementById("additional-pet-buttons");
+
+    dogOwnerCheckbox.addEventListener("change", function () {
+        if (this.checked) {
+            dogWalkerCheckbox.checked = false;
+        }
+        dogInputs.style.display = this.checked ? "block" : "none";
+        additionalPetButtons.style.display = this.checked ? "flex" : "none";
+        if (!this.checked) {
+            clearAdditionalDogs();
+        }
+    });
+
+    dogWalkerCheckbox.addEventListener("change", function () {
+        if (this.checked) {
+            dogOwnerCheckbox.checked = false;
+            dogInputs.style.display = "none";
+            additionalPetButtons.style.display = "none";
+            clearAdditionalDogs();
+        }
+    });
+
+    document.getElementById("add-dog").addEventListener("click", function () {
+        var newInput = document.createElement("div");
+        newInput.innerHTML = `
+    <div class="form-group" style="display: flex; align-items: center;">
+      <input type="text" class="form-control dog-input" name="add_dog" placeholder="Pet name" style="flex: 1; margin-right: 5px;">
+      <input type="text" class="form-control dog-input" name="add_breed" placeholder="Breed" style="flex: 1; margin-right: 5px;">
+      <input type="number" class="form-control dog-input" name="add_age" placeholder="Age" style="flex: 1; margin-right: 5px;" min="0">
+      <button type="button" class="btn btn-danger delete-dog">Delete</button>
+    </div>
+  `;
+        dogInputs.appendChild(newInput);
+    });
+
+    document.getElementById("dog-form").addEventListener("click", function (event) {
+        if (event.target.classList.contains("delete-dog")) {
+            event.target.parentElement.remove();
+        }
+    });
+
+    document.getElementById("clear-all").addEventListener("click", function () {
+        clearAdditionalDogs();
+    });
+
+    function clearAdditionalDogs() {
+        while (dogInputs.children.length > 1) {
+            dogInputs.removeChild(dogInputs.lastChild);
+        }
+    }
+</script>
+{% endblock %}
