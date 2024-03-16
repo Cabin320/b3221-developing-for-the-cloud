@@ -13,27 +13,29 @@
     <img class="mb-4" src="static/images/pawprint.png" alt="" width="72" height="72">
     <h1 class="h3 mb-3 font-weight-normal">Please Register</h1>
     <label for="inputEmail" class="sr-only">Email address</label>
-    <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+    <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required
+           autofocus>
     <br>
     <label for="inputPassword" class="sr-only">Password</label>
-    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+    <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
     <br>
     <div style="display: flex; justify-content: space-between;">
         <div style="flex-grow: 1;">
-            <input type="checkbox" checked="checked" id="dogWalkerCheckbox">
+            <input type="checkbox" checked="checked" name="dog_walker" id="dogWalkerCheckbox">
             <label for="dogWalkerCheckbox">Dog Walker</label>
         </div>
         <div style="flex-grow: 1;">
-            <input type="checkbox" id="dogOwnerCheckbox"> <label for="dogOwnerCheckbox">Dog Owner</label>
+            <input type="checkbox" name="dog_owner" id="dogOwnerCheckbox"> <label for="dogOwnerCheckbox">Dog
+            Owner</label>
         </div>
     </div>
     <div id="dog-inputs" style="display: none;">
         <div class="form-group" style="display: flex; align-items: center;">
-            <input type="text" class="form-control dog-input" name="dog" placeholder="Pet name"
+            <input type="text" class="form-control dog-input" id="dog" name="dog" placeholder="Pet name"
                    style="flex: 1; margin-right: 5px;">
-            <input type="text" class="form-control dog-input" name="breed" placeholder="Breed"
+            <input type="text" class="form-control dog-input" id="breed" name="breed" placeholder="Breed"
                    style="flex: 1; margin-right: 5px;">
-            <input type="number" class="form-control dog-input" name="age" placeholder="Age"
+            <input type="number" class="form-control dog-input" id="age" name="age" placeholder="Age"
                    style="flex: 1; margin-right: 70px;" min="0">
         </div>
     </div>
