@@ -60,7 +60,7 @@ async def submit_registry_info(request: Request):
             dog_walker_info = DogWalkerInfo(email=email, password=password)
 
             print(dog_walker_info)
-            return templates.TemplateResponse("registration.html", {"request": request, "submitted": True})
+            return templates.TemplateResponse("dashboard.html", {"request": request, "submitted": True})
 
     if form_data.get("dog_owner") is not None:
         dog = form_data.get("dog")
@@ -86,7 +86,7 @@ async def submit_registry_info(request: Request):
             )
 
             print(dog_owner_info)
-            return templates.TemplateResponse("registration.html", {"request": request, "submitted": True})
+            return templates.TemplateResponse("dashboard.html", {"request": request, "submitted": True})
 
     return templates.TemplateResponse("registration.html", {"request": request, "submitted": False})
 
