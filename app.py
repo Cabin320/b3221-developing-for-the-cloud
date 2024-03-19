@@ -1,16 +1,21 @@
-import uvicorn
-from typing import List, Optional
+from datetime import timedelta
+from typing import Annotated
 
-from fastapi import FastAPI, Request, Form
+import uvicorn
+from fastapi import FastAPI, Request, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse
+from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel
+from starlette.datastructures import MutableHeaders
+from starlette.responses import JSONResponse
+
+from utils.authentication import authenticate_user, create_access_token, get_current_user
+from utils.base_models import DogWalkerInfo, AdditionalPetInfo, DogOwnerInfo, User
+from utils.env_vars import db, ACCESS_TOKEN_EXPIRE_MINUTES
 
 app = FastAPI(
-    title="Waqq.ly Website",
-    docs_url=None,
-    redoc_url=None
+    title="Waqq.ly Website"
 )
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -18,29 +23,49 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
-class DogWalkerInfo(BaseModel):
-    email: str
-    password: str
-
-
-class AdditionalPetInfo(BaseModel):
-    name: str
-    breed: str
-    age: int
-
-
-class DogOwnerInfo(BaseModel):
-    email: str
-    password: str
-    dog: str
-    breed: str
-    age: int
-    add_pet: Optional[List[AdditionalPetInfo]] = None
-
-
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
+
+@app.post("/token")
+async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> JSONResponse:
+    user = authenticate_user(db, form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email},
+        expires_delta=access_token_expires
+    )
+
+    response = JSONResponse(content={"access_token": access_token, "token_type": "bearer"})
+    response.set_cookie(key="token", value=access_token, httponly=True)
+    return response
+
+
+@app.middleware("http")
+async def authorization_middleware(request: Request, call_next):
+    access_token = request.cookies.get("access_token")
+
+    if access_token and "Authorization" not in request.headers.keys():
+        new_header = MutableHeaders(request._headers)
+        new_header["Authorization"] = f"Bearer {access_token}"
+        request._headers = new_header
+        request.scope.update(headers=request.headers.raw)
+
+    response = await call_next(request)
+    return response
+
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def register_page(request: Request, current_user: Annotated[User, Depends(get_current_user)]):
+    return templates.TemplateResponse("registration.html", {"request": request, "current_user": current_user})
 
 
 @app.get("/register", response_class=HTMLResponse)
