@@ -13,9 +13,14 @@
     <!--suppress HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget -->
     <img class="mb-4" src="static/images/pawprint.png" alt="" width="72" height="72">
     <h1 class="h3 mb-3 font-weight-normal">Please Register</h1>
-    <label for="inputEmail" class="sr-only">Email address</label>
-    <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required
-           autofocus>
+    <div style="display: flex; align-items: center;">
+        <label for="inputUser" class="sr-only">User</label>
+        <input type="text" name="user" id="inputUser" class="form-control" placeholder="Username" required autofocus
+               style="margin-right: 5px;">
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required
+               autofocus style="margin-left: 5px;">
+    </div>
     <br>
     <label for="inputPassword" class="sr-only">Password</label>
     <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>

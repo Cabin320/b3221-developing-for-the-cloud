@@ -16,7 +16,9 @@ from utils.base_models import DogWalkerInfo, AdditionalPetInfo, DogOwnerInfo, Us
 from utils.env_vars import db, ACCESS_TOKEN_EXPIRE_MINUTES
 
 app = FastAPI(
-    title="Waqq.ly Website"
+    title="Waqq.ly Website",
+    docs_url=None,
+    redoc_url=None
 )
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
