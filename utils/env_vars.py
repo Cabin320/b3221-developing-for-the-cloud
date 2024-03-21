@@ -1,11 +1,6 @@
 from os import getenv
 
-CONNECTION_STRING = {
-    "host": getenv("HOST"),
-    "port": getenv("PORT"),
-    "username": getenv("USERNAME"),
-    "password": getenv("PASSWORD")
-}
+CONNECTION_STRING = getenv("CONNECTION_STRING")
 
 DB_NAME = getenv("DB_NAME")
 COLLECTION_NAME = getenv("COLLECTION_NAME")
@@ -25,3 +20,4 @@ db = {
 assert CONNECTION_STRING is not None, "Connection string is not defined"
 assert DB_NAME is not None, "DB_NAME is not defined"
 assert COLLECTION_NAME is not None, "COLLECTION_NAME is not defined"
+assert SECRET_KEY is not None, "SECRET_KEY is not defined"
