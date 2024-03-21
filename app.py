@@ -65,7 +65,7 @@ async def authorization_middleware(request: Request, call_next):
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def register_page(request: Request, current_user: Annotated[User, Depends(get_current_user)]):
-    return templates.TemplateResponse("registration.html", {"request": request, "current_user": current_user})
+    return templates.TemplateResponse("dashboard.html", {"request": request, "current_user": current_user})
 
 
 @app.get("/register", response_class=HTMLResponse)
