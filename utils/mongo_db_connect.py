@@ -11,7 +11,7 @@ from pymongo.errors import ConnectionFailure
 def connect_to_db(connection_str: str) -> MongoClient:
     """
     Connect to MongoDB and return MongoClient object
-    :param connection_str:
+    :param connection_str: string with MongoDB connection string
     :return: MongoClient object
     """
     try:
