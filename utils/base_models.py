@@ -9,16 +9,17 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    email: str | None = None
+    username: str | None = None
 
 
 class User(BaseModel):
-    email: str
+    username: str
+    email: str | None = None
+    full_name: str | None = None
     disabled: bool | None = None
 
 
 class UserInDB(User):
-    email: str
     hashed_password: str
 
 

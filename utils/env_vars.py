@@ -11,6 +11,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 db = {
     "johndoe": {
+        "username": "johndoe",
+        "full_name": "John Doe",
         "email": "johndoe@example.com",
         "hashed_password": "$2b$12$3QEfYTtfW8bvg5bfrvga2unJwnfxmgjjIV9vQQS0jgEH0NTkWGkqe",
         "disabled": False,

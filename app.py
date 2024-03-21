@@ -1,8 +1,9 @@
 from datetime import timedelta
-from typing import Annotated
+from http import HTTPStatus
+from typing import Annotated, Optional
 
 import uvicorn
-from fastapi import FastAPI, Request, Depends, HTTPException, status
+from fastapi import FastAPI, Request, Depends, HTTPException, status, Cookie
 from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
@@ -23,32 +24,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
-@app.get("/", response_class=HTMLResponse)
-async def read_root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
-
-
-@app.post("/token")
-async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> JSONResponse:
-    user = authenticate_user(db, form_data.username, form_data.password)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.email},
-        expires_delta=access_token_expires
-    )
-
-    response = JSONResponse(content={"access_token": access_token, "token_type": "bearer"})
-    response.set_cookie(key="token", value=access_token, httponly=True)
-    return response
-
-
 @app.middleware("http")
 async def authorization_middleware(request: Request, call_next):
     access_token = request.cookies.get("access_token")
@@ -63,9 +38,43 @@ async def authorization_middleware(request: Request, call_next):
     return response
 
 
-@app.get("/dashboard", response_class=HTMLResponse)
-async def register_page(request: Request, current_user: Annotated[User, Depends(get_current_user)]):
-    return templates.TemplateResponse("dashboard.html", {"request": request, "current_user": current_user})
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+@app.post("/token", response_class=JSONResponse)
+async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> JSONResponse:
+    user = authenticate_user(db, form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.username},
+        expires_delta=access_token_expires
+    )
+
+    response = JSONResponse(content={"access_token": access_token, "token_type": "bearer"})
+    response.set_cookie(key="access_token", value=access_token, secure=True)
+    return response
+
+
+@app.get("/get_cookie", response_class=JSONResponse)
+async def get_cookies(access_token: Optional[str] = Cookie(None)):
+    try:
+        return {"access_token": access_token}
+    except Exception:
+        raise HTTPException(detail="No cookie found", status_code=HTTPStatus.BAD_REQUEST)
+
+
+@app.get("/dashboard", response_class=HTMLResponse, status_code=HTTPStatus.OK)
+async def dashoard_page(request: Request, current_user: Annotated[User, Depends(get_current_user)]):
+    return templates.TemplateResponse("dashboard.html", {"request": request, "current_user": current_user.email})
 
 
 @app.get("/register", response_class=HTMLResponse)
