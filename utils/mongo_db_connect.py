@@ -6,7 +6,7 @@ def connect_to_db(connection_str: str) -> MongoClient:
     """
     Connect to MongoDB and return MongoClient object
     :param connection_str:
-    :return:
+    :return: MongoClient object
     """
     try:
         client = MongoClient(connection_str)
