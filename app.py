@@ -10,6 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.datastructures import MutableHeaders
 from starlette.responses import JSONResponse, Response
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from utils.authentication import authenticate_user, create_access_token, get_current_user
 from utils.base_models import DogWalkerInfo, AdditionalPetInfo, DogOwnerInfo, User
@@ -36,6 +37,24 @@ async def authorization_middleware(request: Request, call_next):
 
     response = await call_next(request)
     return response
+
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    return templates.TemplateResponse(
+        "error.html",
+        {"request": request, "status_code": exc.status_code},
+        status_code=exc.status_code
+    )
+
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return templates.TemplateResponse(
+        "error.html",
+        {"request": request, "status_code": exc.status_code},
+        status_code=exc.status_code
+    )
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -78,7 +97,7 @@ async def get_cookies(access_token: Optional[str] = Cookie(None)):
 
 
 @app.get("/dashboard", response_class=HTMLResponse, status_code=HTTPStatus.OK)
-async def dashoard_page(request: Request, current_user: Annotated[User, Depends(get_current_user)]):
+async def dashboard_page(request: Request, current_user: Annotated[User, Depends(get_current_user)]):
     return templates.TemplateResponse(
         "dashboard.html", {
             "request": request, "show_button": True, "current_user": current_user.username
