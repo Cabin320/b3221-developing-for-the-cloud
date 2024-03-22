@@ -21,11 +21,11 @@
     <br>
     <div style="display: flex; justify-content: space-between;">
         <div style="flex-grow: 1;">
-            <input type="checkbox" checked="checked" name="dog_walker" id="dogWalkerCheckbox">
+            <input type="radio" name="dog_walker" id="dogWalkerCheckbox">
             <label for="dogWalkerCheckbox">Dog Walker</label>
         </div>
         <div style="flex-grow: 1;">
-            <input type="checkbox" name="dog_owner" id="dogOwnerCheckbox"> <label for="dogOwnerCheckbox">Dog
+            <input type="radio" name="dog_owner" id="dogOwnerCheckbox"> <label for="dogOwnerCheckbox">Dog
             Owner</label>
         </div>
     </div>
@@ -39,7 +39,7 @@
                    style="flex: 1; margin-right: 5px;">
             <label for="age"></label>
             <input type="number" class="form-control dog-input" id="age" name="age" placeholder="Age"
-                   style="flex: 1; margin-right: 70px;" min="0">
+                   style="flex: 1; margin-right: 70px;" min="0" max="40">
         </div>
     </div>
     <div id="additional-pet-buttons" style="display: none; justify-content: space-between;">
@@ -53,5 +53,6 @@
     <p class="mt-5 mb-3 text-muted" style="margin-top: 10px;">&copy; Waqq.ly 2024</p>
 </form>
 
+<script src="/static/js/add_walker_info.js"></script>
 <script src="/static/js/add_additional_pet.js"></script>
 {% endblock %}
