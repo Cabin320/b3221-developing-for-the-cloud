@@ -3,14 +3,14 @@ from http import HTTPStatus
 from typing import Annotated, Optional
 
 import uvicorn
-from fastapi import FastAPI, Request, Depends, HTTPException, status, Cookie
+from fastapi import FastAPI, Request, Depends, status, Cookie
 from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.datastructures import MutableHeaders
 from starlette.responses import JSONResponse, Response
-from starlette.exceptions import HTTPException as StarletteHTTPException
+from starlette.exceptions import HTTPException
 
 from utils.authentication import authenticate_user, create_access_token, get_current_user
 from utils.base_models import DogWalkerInfo, AdditionalPetInfo, DogOwnerInfo, User
@@ -39,21 +39,10 @@ async def authorization_middleware(request: Request, call_next):
     return response
 
 
-@app.exception_handler(StarletteHTTPException)
-async def http_exception_handler(request: Request, exc: StarletteHTTPException):
-    return templates.TemplateResponse(
-        "error.html",
-        {"request": request, "status_code": exc.status_code},
-        status_code=exc.status_code
-    )
-
-
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     return templates.TemplateResponse(
-        "error.html",
-        {"request": request, "status_code": exc.status_code},
-        status_code=exc.status_code
+        "error.html", {"request": request, "status_code": exc.status_code}, status_code=exc.status_code
     )
 
 
