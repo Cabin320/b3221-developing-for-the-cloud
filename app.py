@@ -45,7 +45,7 @@ async def authorization_middleware(request: Request, call_next):
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     return templates.TemplateResponse(
-        "error.html", {"request": request, "status_code": exc.status_code}, status_code=exc.status_code
+        "error.html", {"request": request, "status_code": exc.status_code, "exc": exc}, status_code=exc.status_code
     )
 
 
