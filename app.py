@@ -9,16 +9,14 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.datastructures import MutableHeaders
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, Response
 
 from utils.authentication import authenticate_user, create_access_token, get_current_user
 from utils.base_models import DogWalkerInfo, AdditionalPetInfo, DogOwnerInfo, User
 from utils.env_vars import db, ACCESS_TOKEN_EXPIRE_MINUTES
 
 app = FastAPI(
-    title="Waqq.ly Website",
-    docs_url=None,
-    redoc_url=None
+    title="Waqq.ly Website"
 )
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -42,7 +40,7 @@ async def authorization_middleware(request: Request, call_next):
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("index.html", {"request": request, "show_button": False})
 
 
 @app.post("/token", response_class=JSONResponse)
@@ -66,6 +64,11 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     return response
 
 
+@app.get("/logout")
+async def delete_cookie(response: Response):
+    response.delete_cookie(key="access_token")
+
+
 @app.get("/get_cookie", response_class=JSONResponse)
 async def get_cookies(access_token: Optional[str] = Cookie(None)):
     try:
@@ -76,12 +79,16 @@ async def get_cookies(access_token: Optional[str] = Cookie(None)):
 
 @app.get("/dashboard", response_class=HTMLResponse, status_code=HTTPStatus.OK)
 async def dashoard_page(request: Request, current_user: Annotated[User, Depends(get_current_user)]):
-    return templates.TemplateResponse("dashboard.html", {"request": request, "current_user": current_user.email})
+    return templates.TemplateResponse(
+        "dashboard.html", {
+            "request": request, "show_button": True, "current_user": current_user.username
+        }
+    )
 
 
 @app.get("/register", response_class=HTMLResponse)
 async def register_page(request: Request):
-    return templates.TemplateResponse("registration.html", {"request": request})
+    return templates.TemplateResponse("registration.html", {"request": request, "show_button": False})
 
 
 @app.post("/submit", response_class=HTMLResponse)

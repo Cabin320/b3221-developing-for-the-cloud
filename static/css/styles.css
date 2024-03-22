@@ -8,29 +8,6 @@ body, html {
   border-radius: 0 !important;
 }
 
-.row.content {
-  min-height: calc(100% - 50px); /* Adjusted to accommodate footer and navbar */
-  overflow-y: auto; /* Add scroll if content exceeds the height */
-}
 
-.sidenav {
-  padding-top: 20px;
-  background-color: #f1f1f1;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 250px;
-}
 
-@media screen and (max-width: 767px) {
-.sidenav {
-  height: auto;
-  padding: 15px;
-  width: 100%;
-}
-.row.content {
-  height: auto;
-  }
-}
 

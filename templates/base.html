@@ -16,25 +16,23 @@
 <nav class="navbar navbar-inverse" style="background-color: #344955">
     <div class="container-fluid">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#collapsed-navbar">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
             <a class="navbar-brand">
                 Waqq.ly
             </a>
         </div>
-        <div class="collapse navbar-collapse" id="collapsed-navbar">
+        {% if show_button %}
+        <div>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="/"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                <li><a href="/" id="sign-out"><span class="glyphicon glyphicon-log-in"></span> Sign Out</a></li>
             </ul>
         </div>
+        {% endif %}
     </div>
 </nav>
 
 <div class="container text-center">
     {% block content %}{% endblock %}
 </div>
+<script src="/static/js/delete_cookie.js"></script>
 </body>
 </html>
