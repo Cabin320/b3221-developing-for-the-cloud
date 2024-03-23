@@ -122,8 +122,11 @@ async def submit_form(
     existing_user = collection.find_one({"$or": [{"user": user}, {"email": email}]})
     if existing_user:
         existing_field = "user" if existing_user.get("user") == user else "email"
-        return templates.TemplateResponse("registration.html",
-                                          {"request": request, "existing": True, "existing_field": existing_field})
+        return templates.TemplateResponse(
+            "registration.html", {
+                "request": request, "existing": True, "existing_field": existing_field
+            }
+        )
 
     dog_data = Dog(name=name, breed=breed, age=age)
     user_data = User(user=user, email=email, location=location, password=get_password_hash(password), dog=dog_data)
