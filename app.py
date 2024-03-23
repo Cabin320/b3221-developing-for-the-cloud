@@ -4,7 +4,7 @@ from typing import Annotated, Optional
 
 import uvicorn
 
-from fastapi import FastAPI, Request, Depends, status, Cookie
+from fastapi import FastAPI, Request, Depends, status, Cookie, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -15,9 +15,11 @@ from starlette.exceptions import HTTPException
 from starlette.datastructures import MutableHeaders
 from starlette.responses import JSONResponse, Response
 
-from utils.base_models import User
-from utils.env_vars import db, ACCESS_TOKEN_EXPIRE_MINUTES
-from utils.authentication import authenticate_user, create_access_token, get_current_user
+from utils.base_models import User, Dog
+from utils.env_vars import db, ACCESS_TOKEN_EXPIRE_MINUTES, CONNECTION_STRING, DB_NAME, COLLECTION_NAME
+
+from utils.mongo_db_connect import connect_to_db
+from utils.authentication import authenticate_user, create_access_token, get_current_user, get_password_hash
 
 app = FastAPI(
     title="Waqq.ly Website"
@@ -26,6 +28,10 @@ app = FastAPI(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
+
+client = connect_to_db(CONNECTION_STRING)
+database = client[DB_NAME]
+collection = database[COLLECTION_NAME]
 
 
 @app.middleware("http")
@@ -40,18 +46,6 @@ async def authorization_middleware(request: Request, call_next):
 
     response = await call_next(request)
     return response
-
-
-@app.exception_handler(HTTPException)
-async def http_exception_handler(request: Request, exc: HTTPException):
-    return templates.TemplateResponse(
-        "error.html", {"request": request, "status_code": exc.status_code, "exc": exc}, status_code=exc.status_code
-    )
-
-
-@app.get("/", response_class=HTMLResponse)
-async def read_root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "show_button": False})
 
 
 @app.post("/token", response_class=JSONResponse)
@@ -73,6 +67,18 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     response = JSONResponse(content={"access_token": access_token, "token_type": "bearer"})
     response.set_cookie(key="access_token", value=access_token, secure=True)
     return response
+
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return templates.TemplateResponse(
+        "error.html", {"request": request, "status_code": exc.status_code, "exc": exc}, status_code=exc.status_code
+    )
+
+
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request, "show_button": False})
 
 
 @app.get("/logout")
@@ -103,9 +109,26 @@ async def register_page(request: Request):
 
 
 @app.post("/submit", response_class=HTMLResponse)
-async def submit_registry_info(request: Request):
-    form_data = await request.form()
+async def submit_form(
+        request: Request,
+        user: str = Form(...),
+        email: str = Form(...),
+        location: str = Form(...),
+        password: str = Form(...),
+        name: list[str] = Form(...),
+        breed: list[str] = Form(...),
+        age: list[str] = Form(...)
+):
+    existing_user = collection.find_one({"$or": [{"user": user}, {"email": email}]})
+    if existing_user:
+        existing_field = "user" if existing_user.get("user") == user else "email"
+        return templates.TemplateResponse("registration.html",
+                                          {"request": request, "existing": True, "existing_field": existing_field})
 
+    dog_data = Dog(name=name, breed=breed, age=age)
+    user_data = User(user=user, email=email, location=location, password=get_password_hash(password), dog=dog_data)
+
+    collection.insert_one(user_data.dict())
     return templates.TemplateResponse("registration.html", {"request": request})
 
 

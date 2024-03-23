@@ -1,6 +1,5 @@
-from typing import List, Optional
-
 from pydantic import BaseModel
+from typing import Optional
 
 
 class Token(BaseModel):
@@ -15,7 +14,6 @@ class TokenData(BaseModel):
 class User(BaseModel):
     username: str
     email: str | None = None
-    full_name: str | None = None
     disabled: bool | None = None
 
 
@@ -23,21 +21,15 @@ class UserInDB(User):
     hashed_password: str
 
 
-class DogWalkerInfo(BaseModel):
+class Dog(BaseModel):
+    name: list[str]
+    breed: list[str]
+    age: list[str]
+
+
+class User(BaseModel):
+    user: str
     email: str
+    location: str
     password: str
-
-
-class AdditionalPetInfo(BaseModel):
-    name: str
-    breed: str
-    age: int
-
-
-class DogOwnerInfo(BaseModel):
-    email: str
-    password: str
-    dog: str
-    breed: str
-    age: int
-    add_pet: Optional[List[AdditionalPetInfo]] = None
+    dog: Optional[Dog] = None

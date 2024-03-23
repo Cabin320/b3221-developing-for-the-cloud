@@ -27,9 +27,9 @@ document.getElementById("add-dog").addEventListener("click", function () {
     const newInput = document.createElement("div");
     newInput.innerHTML = `
 <div class="form-group" style="display: flex; align-items: center;">
-  <input type="text" class="form-control dog-input" name="add_dog" placeholder="Pet name" style="flex: 1; margin-right: 5px;">
-  <input type="text" class="form-control dog-input" name="add_breed" placeholder="Breed" style="flex: 1; margin-right: 5px;">
-  <input type="number" class="form-control dog-input" name="add_age" placeholder="Age" style="flex: 1; margin-right: 5px;" min="0" max="40">
+  <input type="text" class="form-control dog-input" name="name" placeholder="Pet name" style="flex: 1; margin-right: 5px;">
+  <input type="text" class="form-control dog-input" name="breed" placeholder="Breed" style="flex: 1; margin-right: 5px;">
+  <input type="number" class="form-control dog-input" name="age" placeholder="Age" style="flex: 1; margin-right: 5px;" min="0" max="40">
   <button type="button" class="btn btn-danger delete-dog">Delete</button>
 </div>
 `;
