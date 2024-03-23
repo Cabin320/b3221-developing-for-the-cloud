@@ -22,6 +22,10 @@
     <label for="inputPassword" class="sr-only">Password</label>
     <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
     <br>
+    <label for="inputPasswordCheck" class="sr-only">Password</label>
+    <input type="password" name="password_check" id="inputPasswordCheck" class="form-control" placeholder="Re-enter Password"
+           required>
+    <br>
     <fieldset style="display: flex; justify-content: space-between;">
         <div style="flex-grow: 1;">
             <input type="radio" name="dog_walker" id="dogWalkerCheckbox">
@@ -36,15 +40,28 @@
     <div id="existingAlert" class="alert alert-danger" role="alert">
         <button type="button" class="close" data-dismiss="alert">×</button>
         {% if existing_field == 'user' %}
-            Username already exists
+        Username already exists
         {% elif existing_field == 'email' %}
-            Email already exists
+        Email already exists
         {% endif %}
     </div>
 
     <script>
-        setTimeout(function() {
+        setTimeout(function () {
             document.getElementById('existingAlert').style.display = 'none';
+        }, 5000);
+    </script>
+    {% endif %}
+
+    {% if password_mismatch %}
+    <div id="passwordMismatchAlert" class="alert alert-danger" role="alert">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        Passwords do not match
+    </div>
+
+    <script>
+        setTimeout(function () {
+            document.getElementById('passwordMismatchAlert').style.display = 'none';
         }, 5000);
     </script>
     {% endif %}

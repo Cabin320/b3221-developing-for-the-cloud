@@ -116,6 +116,7 @@ async def submit_form(
         email: str = Form(...),
         location: str = Form(...),
         password: str = Form(...),
+        password_check: str = Form(...),
         name: list[str] = Form(...),
         breed: list[str] = Form(...),
         age: list[str] = Form(...)
@@ -133,6 +134,13 @@ async def submit_form(
         return templates.TemplateResponse(
             "registration.html", {
                 "request": request, "existing": True, "existing_field": existing_field
+            }
+        )
+
+    if password != password_check:
+        return templates.TemplateResponse(
+            "registration.html", {
+                "request": request, "password_mismatch": True
             }
         )
 
