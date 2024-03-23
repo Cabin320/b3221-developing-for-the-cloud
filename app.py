@@ -16,7 +16,7 @@ from starlette.datastructures import MutableHeaders
 from starlette.responses import JSONResponse, Response
 
 from utils.base_models import User, Dog
-from utils.env_vars import db, ACCESS_TOKEN_EXPIRE_MINUTES, CONNECTION_STRING, DB_NAME, COLLECTION_NAME
+from utils.env_vars import db, ACCESS_TOKEN_EXPIRE_MINUTES, CONNECTION_STRING, DB_NAME
 
 from utils.mongo_db_connect import connect_to_db
 from utils.authentication import authenticate_user, create_access_token, get_current_user, get_password_hash
@@ -31,7 +31,8 @@ templates = Jinja2Templates(directory="templates")
 
 client = connect_to_db(CONNECTION_STRING)
 database = client[DB_NAME]
-collection = database[COLLECTION_NAME]
+owners_collection = database["owners"]
+walkers_collection = database["walkers"]
 
 
 @app.middleware("http")
@@ -119,19 +120,31 @@ async def submit_form(
         breed: list[str] = Form(...),
         age: list[str] = Form(...)
 ):
-    existing_user = collection.find_one({"$or": [{"user": user}, {"email": email}]})
-    if existing_user:
-        existing_field = "user" if existing_user.get("user") == user else "email"
+    form_data = await request.form()
+
+    dog_walker_selected = form_data.get('dog_walker')
+    dog_owner_selected = form_data.get('dog_owner')
+
+    existing_user_in_owners = owners_collection.find_one({"$or": [{"user": user}, {"email": email}]})
+    existing_user_in_walkers = walkers_collection.find_one({"$or": [{"user": user}, {"email": email}]})
+
+    if existing_user_in_owners or existing_user_in_walkers:
+        existing_field = "user" if existing_user_in_owners and existing_user_in_owners.get("user") == user else "email"
         return templates.TemplateResponse(
             "registration.html", {
                 "request": request, "existing": True, "existing_field": existing_field
             }
         )
 
-    dog_data = Dog(name=name, breed=breed, age=age)
-    user_data = User(user=user, email=email, location=location, password=get_password_hash(password), dog=dog_data)
+    if dog_walker_selected:
+        user_data = User(user=user, email=email, location=location, password=get_password_hash(password))
+        walkers_collection.insert_one(user_data.dict())
 
-    collection.insert_one(user_data.dict())
+    elif dog_owner_selected:
+        dog_data = Dog(name=name, breed=breed, age=age)
+        user_data = User(user=user, email=email, location=location, password=get_password_hash(password), dog=dog_data)
+        owners_collection.insert_one(user_data.dict())
+
     return templates.TemplateResponse("registration.html", {"request": request})
 
 
