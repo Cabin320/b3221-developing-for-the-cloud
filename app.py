@@ -106,6 +106,8 @@ async def register_page(request: Request):
 async def submit_registry_info(request: Request):
     form_data = await request.form()
 
+    print(form_data)
+
     return templates.TemplateResponse("registration.html", {"request": request})
 
 
