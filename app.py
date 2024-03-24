@@ -14,7 +14,6 @@ from fastapi.security import OAuth2PasswordRequestForm
 from starlette.exceptions import HTTPException
 from starlette.datastructures import MutableHeaders
 from starlette.responses import JSONResponse, Response
-from starlette.templating import _TemplateResponse
 
 from utils.base_models import User, Dog
 from utils.env_vars import ACCESS_TOKEN_EXPIRE_MINUTES, CONNECTION_STRING, DB_NAME
@@ -23,7 +22,9 @@ from utils.mongo_db_connect import connect_to_db
 from utils.authentication import authenticate_user, create_access_token, get_current_user, get_password_hash
 
 app = FastAPI(
-    title="Waqq.ly Website"
+    title="Waqq.ly Website",
+    docs_url=None,
+    redoc_url=None
 )
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -101,11 +102,24 @@ async def get_cookies(access_token: Optional[str] = Cookie(None)):
         raise HTTPException(detail="No cookie found", status_code=HTTPStatus.BAD_REQUEST)
 
 
-@app.get("/dashboard", response_class=HTMLResponse, status_code=HTTPStatus.OK)
-async def dashboard_page(request: Request, current_user: Annotated[User, Depends(get_current_user)]):
+@app.get("/dashboard", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
+async def dashboard_page(request: Request, current_user: User = Depends(get_current_user)):
+    owners_data = owners_collection.find_one({"user": current_user.username})
+    walkers_data = walkers_collection.find_one({"user": current_user.username})
+
+    user_data = None
+
+    if owners_data:
+        user_data = owners_data
+    elif walkers_data:
+        user_data = walkers_data
+
+    if not user_data:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User data not found")
+
     return templates.TemplateResponse(
         "dashboard.html", {
-            "request": request, "show_button": True, "current_user": current_user.username
+            "request": request, "show_button": True, "current_user": current_user.username, "user_data": user_data
         }
     )
 

@@ -5,8 +5,8 @@
 {% block content %}
 <div class="container">
     <div class="text-center">
-        <h2>Lorem Ipsum</h2>
-        <p>Lorem Ipsum</p>
+        <h2>Hello, {{ current_user }}</h2>
+        <p>{{ user_data.email }} {{ user_data.location }}</p>
         <div class="table-responsive">
             <table class="table table-hover table-striped table-bordered">
             </table>
