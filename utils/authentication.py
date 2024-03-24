@@ -8,12 +8,16 @@ from jose import jwt, JWTError
 from passlib.context import CryptContext
 from starlette import status
 
+from utils.mongo_db_connect import connect_to_db
 from utils.base_models import UserInDB, TokenData, User
-from utils.env_vars import SECRET_KEY, ALGORITHM, db
+from utils.env_vars import SECRET_KEY, ALGORITHM, CONNECTION_STRING, DB_NAME
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+client = connect_to_db(CONNECTION_STRING)
+database = client[DB_NAME]
 
 
 def verify_password(plain_password, hashed_password):
@@ -24,14 +28,23 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def get_user(db, username: str):
-    if username in db:
-        user_dict = db[username]
-        return UserInDB(**user_dict)
+def get_user(database, username: str):
+    owners_collection = database["owners"]
+    walkers_collection = database["walkers"]
+
+    user_data = owners_collection.find_one({"user": username})
+    if user_data:
+        return UserInDB(username=user_data["user"], hashed_password=user_data["password"])
+
+    user_data = walkers_collection.find_one({"user": username})
+    if user_data:
+        return UserInDB(username=user_data["user"], hashed_password=user_data["password"])
+
+    return None
 
 
-def authenticate_user(db, username: str, password: str):
-    user = get_user(db, username)
+def authenticate_user(database, username: str, password: str):
+    user = get_user(database, username)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
@@ -64,7 +77,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = get_user(db, username=token_data.username)
+    user = get_user(database, username=token_data.username)
     if user is None:
         raise credentials_exception
     return user

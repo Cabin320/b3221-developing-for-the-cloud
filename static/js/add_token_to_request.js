@@ -18,6 +18,7 @@ document.getElementById('sign-in').addEventListener('submit', async function(eve
         if (response.ok) {
             window.location.href = '/dashboard';
         } else {
+
         }
     } catch (error) {
         console.error('Error:', error);

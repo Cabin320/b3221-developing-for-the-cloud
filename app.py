@@ -14,9 +14,10 @@ from fastapi.security import OAuth2PasswordRequestForm
 from starlette.exceptions import HTTPException
 from starlette.datastructures import MutableHeaders
 from starlette.responses import JSONResponse, Response
+from starlette.templating import _TemplateResponse
 
 from utils.base_models import User, Dog
-from utils.env_vars import db, ACCESS_TOKEN_EXPIRE_MINUTES, CONNECTION_STRING, DB_NAME
+from utils.env_vars import ACCESS_TOKEN_EXPIRE_MINUTES, CONNECTION_STRING, DB_NAME
 
 from utils.mongo_db_connect import connect_to_db
 from utils.authentication import authenticate_user, create_access_token, get_current_user, get_password_hash
@@ -51,12 +52,11 @@ async def authorization_middleware(request: Request, call_next):
 
 @app.post("/token", response_class=JSONResponse)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> JSONResponse:
-    user = authenticate_user(db, form_data.username, form_data.password)
+    user = authenticate_user(database, form_data.username, form_data.password)
     if not user:
-        raise HTTPException(
+        return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
+            content={"detail": "Incorrect username or password"}
         )
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -73,13 +73,19 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     return templates.TemplateResponse(
-        "error.html", {"request": request, "status_code": exc.status_code, "exc": exc}, status_code=exc.status_code
+        "error.html", {
+            "request": request, "status_code": exc.status_code, "exc": exc
+        }, status_code=exc.status_code
     )
 
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "show_button": False})
+    return templates.TemplateResponse(
+        "index.html", {
+            "request": request, "show_button": False
+        }
+    )
 
 
 @app.get("/logout")
@@ -106,7 +112,11 @@ async def dashboard_page(request: Request, current_user: Annotated[User, Depends
 
 @app.get("/register", response_class=HTMLResponse)
 async def register_page(request: Request):
-    return templates.TemplateResponse("registration.html", {"request": request, "show_button": False})
+    return templates.TemplateResponse(
+        "registration.html", {
+            "request": request, "show_button": False
+        }
+    )
 
 
 @app.post("/submit", response_class=HTMLResponse)

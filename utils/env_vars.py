@@ -8,15 +8,6 @@ SECRET_KEY = getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-db = {
-    "johndoe": {
-        "username": "johndoe",
-        "email": "johndoe@example.com",
-        "hashed_password": "$2b$12$3QEfYTtfW8bvg5bfrvga2unJwnfxmgjjIV9vQQS0jgEH0NTkWGkqe",
-        "disabled": False,
-    }
-}
-
 assert CONNECTION_STRING is not None, "Connection string is not defined"
 assert DB_NAME is not None, "DB_NAME is not defined"
 assert SECRET_KEY is not None, "SECRET_KEY is not defined"
