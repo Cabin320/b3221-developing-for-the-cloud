@@ -9,7 +9,7 @@ from passlib.context import CryptContext
 from starlette import status
 
 from utils.mongo_db_connect import connect_to_db
-from utils.base_models import UserInDB, TokenData, User
+from utils.base_models import UserInDB, TokenData, UserLogin
 from utils.env_vars import SECRET_KEY, ALGORITHM, CONNECTION_STRING, DB_NAME
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -84,7 +84,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
 
 
 async def get_current_active_user(
-        current_user: Annotated[User, Depends(get_current_user)]
+        current_user: Annotated[UserLogin, Depends(get_current_user)]
 ):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")

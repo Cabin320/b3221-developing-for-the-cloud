@@ -107,19 +107,34 @@ async def dashboard_page(request: Request, current_user: User = Depends(get_curr
     owners_data = owners_collection.find_one({"user": current_user.username})
     walkers_data = walkers_collection.find_one({"user": current_user.username})
 
+    all_walkers = walkers_collection.find()
+    all_owners = owners_collection.find()
+
     user_data = None
+    walkers_info = None
+    owners_info = None
 
     if owners_data:
         user_data = owners_data
+        walkers_info = [walker for walker in all_walkers]
     elif walkers_data:
         user_data = walkers_data
+        owners_info = [owner for owner in all_owners]
 
     if not user_data:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User data not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User data not found"
+        )
 
     return templates.TemplateResponse(
         "dashboard.html", {
-            "request": request, "show_button": True, "current_user": current_user.username, "user_data": user_data
+            "request": request,
+            "show_button": True,
+            "current_user": current_user.username,
+            "user_data": user_data,
+            "walkers_info": walkers_info,
+            "owners_info": owners_info
         }
     )
 

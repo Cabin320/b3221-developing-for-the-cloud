@@ -6,10 +6,59 @@
 <div class="container">
     <div class="text-center">
         <h2>Hello, {{ current_user }}</h2>
-        <p>{{ user_data.email }} {{ user_data.location }}</p>
+        <p>Email: {{ user_data.email }} Location: {{ user_data.location }}</p>
+        {% if owners_info %}
+        <div class="table-responsive">
+            <h2>Dog Owners in Need of a Dog Walker</h2>
+            <table class="table table-hover table-striped table-bordered">
+                <tr>
+                    <th>Email</th>
+                    <th>Location</th>
+                    <th>Amount of Pets</th>
+                </tr>
+                {% for owner in owners_info %}
+                <tr>
+                    <td>{{ owner.email }}</td>
+                    <td>{{ owner.location }}</td>
+                    <td>{{ owner.dog.name | length }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% endif %}
+        {% if user_data.dog %}
+        <h2>Your Pet Information</h2>
         <div class="table-responsive">
             <table class="table table-hover table-striped table-bordered">
+                <tr>
+                    <th>Name</th>
+                    <th>Breed</th>
+                    <th>Age</th>
+                </tr>
+                {% for i in range(user_data.dog.name | length) %}
+                <tr>
+                    <td>{{ user_data.dog.name[i] }}</td>
+                    <td>{{ user_data.dog.breed[i] }}</td>
+                    <td>{{ user_data.dog.age[i] }}</td>
+                </tr>
+                {% endfor %}
             </table>
+            {% endif %}
+            {% if walkers_info %}
+            <h2>Available Dog Walkers</h2>
+            <table class="table table-hover table-striped table-bordered">
+                <tr>
+                    <th>Email</th>
+                    <th>Location</th>
+                </tr>
+                {% for walker in walkers_info %}
+                <tr>
+                    <td>{{ walker.email }}</td>
+                    <td>{{ walker.location }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
         </div>
     </div>
 </div>
