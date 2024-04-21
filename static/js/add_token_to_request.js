@@ -15,10 +15,11 @@ document.getElementById('sign-in').addEventListener('submit', async function(eve
             }),
         });
 
-        if (response.ok) {
-            window.location.href = '/dashboard';
+        // Check for unsuccessful response (status code not ok)
+        if (!response.ok) {
+            alert('Login failed! Incorrect username or password.');
         } else {
-
+            window.location.href = '/dashboard';
         }
     } catch (error) {
         console.error('Error:', error);

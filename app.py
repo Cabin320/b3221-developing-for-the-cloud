@@ -39,6 +39,12 @@ walkers_collection = database["walkers"]
 
 @app.middleware("http")
 async def authorization_middleware(request: Request, call_next):
+    """
+    Function to add access token to cookie
+    :param request:
+    :param call_next:
+    :return: response
+    """
     access_token = request.cookies.get("access_token")
 
     if access_token and "Authorization" not in request.headers.keys():
@@ -53,6 +59,11 @@ async def authorization_middleware(request: Request, call_next):
 
 @app.post("/token", response_class=JSONResponse)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> JSONResponse:
+    """
+    Function to check if user credentials are valid
+    :param form_data:
+    :return: 400 Response with validated access tokens
+    """
     user = authenticate_user(database, form_data.username, form_data.password)
     if not user:
         return JSONResponse(
@@ -73,6 +84,12 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
+    """
+    Custom exception
+    :param request:
+    :param exc:
+    :return: HTTP Status Code
+    """
     return templates.TemplateResponse(
         "error.html", {
             "request": request, "status_code": exc.status_code, "exc": exc
@@ -82,6 +99,11 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
+    """
+    Loads the root index.html page
+    :param request:
+    :return: index.html
+    """
     return templates.TemplateResponse(
         "index.html", {
             "request": request, "show_button": False
@@ -91,11 +113,20 @@ async def read_root(request: Request):
 
 @app.get("/logout")
 async def delete_cookie(response: Response):
+    """
+    Function to delete cookie on sign out
+    :param response:
+    """
     response.delete_cookie(key="access_token")
 
 
 @app.get("/get_cookie", response_class=JSONResponse)
 async def get_cookies(access_token: Optional[str] = Cookie(None)):
+    """
+    Test function for checking if an access token has been added
+    :param access_token:
+    :return: access token
+    """
     try:
         return {"access_token": access_token}
     except Exception:
@@ -104,6 +135,12 @@ async def get_cookies(access_token: Optional[str] = Cookie(None)):
 
 @app.get("/dashboard", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
 async def dashboard_page(request: Request, current_user: User = Depends(get_current_user)):
+    """
+    Function to load user data on dashboard page
+    :param request:
+    :param current_user:
+    :return: dashboard.html with user information
+    """
     owners_data = owners_collection.find_one({"user": current_user.username})
     walkers_data = walkers_collection.find_one({"user": current_user.username})
 
@@ -141,6 +178,11 @@ async def dashboard_page(request: Request, current_user: User = Depends(get_curr
 
 @app.get("/register", response_class=HTMLResponse)
 async def register_page(request: Request):
+    """
+    Function to load registration.html template
+    :param request:
+    :return: registration.html
+    """
     return templates.TemplateResponse(
         "registration.html", {
             "request": request, "show_button": False
@@ -160,6 +202,19 @@ async def submit_form(
         breed: list[str] = Form(...),
         age: list[str] = Form(...)
 ):
+    """
+    Function to submit user data to database
+    :param request: User Information
+    :param user: Username
+    :param email: Email
+    :param location: Location of user
+    :param password: Password
+    :param password_check: Re-type Password
+    :param name: Name of Pet
+    :param breed: Breed of Pet
+    :param age: Age of Pet
+    :return: Data sent to database collection
+    """
     form_data = await request.form()
 
     dog_walker_selected = form_data.get('dog_walker')

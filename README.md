@@ -1,20 +1,24 @@
 # Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+This is the Waqq.ly web application designed for the module `BS3221 Developing for the Cloud`.
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+Hosted in this repository, you will find all the necessary code needed to run the application, alongside the dependencies found in the `requirements.txt`.
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+The application has been developed using FastAPI, which is a Python web framework used to manage and build APIs.
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+# Install Dependencies
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+This project uses dependencies listed in a file called requirements.txt.  You can install them using the following command:
+
+`pip install -r requirements.txt`
+
+This command will download and install all the necessary libraries your program needs to run.
+
+# Run the Application
+
+You can start the application using the following command:
+
+`python app.py`
+
+## Additional Notes
+
+You will not be able to run the application locally without the environment variables, please see the `Word document` attached in the `.zip` to find the environment variables, of which will be listed in the Appendices.

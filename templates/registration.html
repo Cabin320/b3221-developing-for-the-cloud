@@ -23,26 +23,28 @@
     <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
     <br>
     <label for="inputPasswordCheck" class="sr-only">Password</label>
-    <input type="password" name="password_check" id="inputPasswordCheck" class="form-control" placeholder="Re-enter Password"
+    <input type="password" name="password_check" id="inputPasswordCheck" class="form-control"
+           placeholder="Re-enter Password"
            required>
     <br>
     <fieldset style="display: flex; justify-content: space-between;">
         <div style="flex-grow: 1;">
-            <input type="radio" name="dog_walker" id="dogWalkerCheckbox">
+            <input type="radio" name="dog_walker" checked id="dogWalkerCheckbox">
             <label for="dogWalkerCheckbox">Dog Walker</label>
         </div>
         <div style="flex-grow: 1;">
-            <input type="radio" name="dog_owner" id="dogOwnerCheckbox"> <label for="dogOwnerCheckbox">Dog
-            Owner</label>
+            <input type="radio" name="dog_owner" id="dogOwnerCheckbox"> <label for="dogOwnerCheckbox">
+            Dog Owner
+        </label>
         </div>
     </fieldset>
     {% if existing %}
     <div id="existingAlert" class="alert alert-danger" role="alert">
         <button type="button" class="close" data-dismiss="alert">×</button>
         {% if existing_field == 'user' %}
-        Username already exists
+            Username already exists
         {% elif existing_field == 'email' %}
-        Email already exists
+            Email already exists
         {% endif %}
     </div>
 

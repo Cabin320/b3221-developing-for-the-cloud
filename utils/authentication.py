@@ -21,14 +21,31 @@ database = client[DB_NAME]
 
 
 def verify_password(plain_password, hashed_password):
+    """
+    Verify the password entered by user
+    :param plain_password:
+    :param hashed_password:
+    :return: Verified password
+    """
     return pwd_context.verify(plain_password, hashed_password)
 
 
 def get_password_hash(password):
+    """
+    Hash the password entered by user
+    :param password:
+    :return: Hashed password
+    """
     return pwd_context.hash(password)
 
 
 def get_user(database, username: str):
+    """
+    Retrieve the user from the database
+    :param database:
+    :param username:
+    :return: Username and Password
+    """
     owners_collection = database["owners"]
     walkers_collection = database["walkers"]
 
@@ -44,6 +61,13 @@ def get_user(database, username: str):
 
 
 def authenticate_user(database, username: str, password: str):
+    """
+    Authenticate the username and password entered
+    :param database:
+    :param username:
+    :param password:
+    :return: Username and Password
+    """
     user = get_user(database, username)
     if not user:
         return False
@@ -53,6 +77,12 @@ def authenticate_user(database, username: str, password: str):
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    """
+    Creates a JWT
+    :param data:
+    :param expires_delta:
+    :return: encoded JWT
+    """
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
@@ -64,6 +94,11 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    """
+    Gets the current user
+    :param token:
+    :return: Validated user with access token
+    """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -86,6 +121,11 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
 async def get_current_active_user(
         current_user: Annotated[UserLogin, Depends(get_current_user)]
 ):
+    """
+    Determines the current user logged in
+    :param current_user:
+    :return: Expires access token for current user if over 30 minutes logged in
+    """
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
