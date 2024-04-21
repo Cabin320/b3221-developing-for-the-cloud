@@ -5,6 +5,7 @@ Welcome to the Waqq.ly web application repository! This application is designed 
 Waqq.ly is a web application built with FastAPI, a Python web framework used for managing and building APIs. It serves as a platform for registering dog walkers or owners and accessing information about them.
 
 ## Live Application
+
 You can access the live application hosted on Azure through the following links:
 - https://www.waqqly.co.uk/
 - https://waqqly-web-app.azurewebsites.net/
