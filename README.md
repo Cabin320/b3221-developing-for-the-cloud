@@ -5,6 +5,11 @@ Hosted in this repository, you will find all the necessary code needed to run th
 
 The application has been developed using FastAPI, which is a Python web framework used to manage and build APIs.
 
+
+The link to the live application hosted by Azure can be found using two different links:
+- https://www.waqqly.co.uk/
+- https://waqqly-web-app.azurewebsites.net/
+
 # Install Dependencies
 
 This project uses dependencies listed in a file called requirements.txt.  You can install them using the following command:
